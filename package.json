@@ -1,0 +1,30 @@
+{
+  "name": "hello-blockstack",
+  "version": "0.0.1",
+  "description": "A simple Blockstack app for testing auth responses",
+  "main": "index.js",
+  "scripts": {
+    "browserify": "browserify requires.js -o public/bundle.js",
+    "start": "npm run browserify; node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcnelson/blockstack-auth-test-app"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcnelson/blockstack-auth-test-app/issues"
+  },
+  "homepage": "https://github.com/jcnelson/blockstack-auth-test-app#readme",
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "express": "^4.15.2"
+  },
+  "dependencies": {
+    "blockstack": "^17.0.0",
+    "buffer": "^5.2.0",
+    "cors": "^2.8.4",
+    "jsontokens": "^0.7.8"
+  }
+}
