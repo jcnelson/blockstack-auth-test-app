@@ -22,7 +22,7 @@
     "express": "^4.15.2"
   },
   "dependencies": {
-    "blockstack": "^17.0.0",
+    "blockstack": "^18.0.0",
     "buffer": "^5.2.0",
     "cors": "^2.8.4",
     "jsontokens": "^0.7.8"
