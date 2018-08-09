@@ -6,6 +6,7 @@ import os
 import sys
 import urlparse
 import posixpath
+import json
 
 class GaiaServerRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     """
@@ -70,22 +71,51 @@ class GaiaServer(BaseHTTPServer.HTTPServer):
 
 if __name__ == "__main__":
     try:
-        port = int(sys.argv[1])
-        gaia_write = sys.argv[2]
+        gaia_conf_path = sys.argv[1]
     except:
-        print 'Usage: {} PORT GAIA_WRITE_ENDPOINT [STORAGE_ROOT]'.format(sys.argv[0])
+        print 'Usage: {} /path/to/gaia.conf [/path/to/storage/dir]'.format(sys.argv[0])
         sys.exit(1)
 
     storage_root = None
 
-    if len(sys.argv) > 2:
-        storage_root = os.path.realpath(sys.argv[3])
+    write_server = None
+    write_port = None
+    write_scheme = None
+
+    with open(gaia_conf_path) as f:
+        gaia_conf_txt = f.read().strip()
+        gaia_conf = json.loads(gaia_conf_txt)
+
+        write_server = gaia_conf['servername']
+        write_port = gaia_conf['port']
+    
+    # assume https by default 
+    if write_server in ['localhost', '127.0.0.1', '::1']:
+        write_scheme = 'http'
     else:
-        storage_root = os.getcwd()
+        write_scheme = 'https'
+
+    gaia_write = '{}://{}:{}'.format(write_scheme, write_server, write_port)
 
     res = requests.get(gaia_write + '/hub_info')
     resp = res.json()
     read_url_prefix = resp['read_url_prefix']
+
+    port = urlparse.urlparse(read_url_prefix).port
+    if port is None:
+        if write_scheme == 'http':
+            port = 80
+        else:
+            port = 443
+
+    if len(sys.argv) > 2:
+        storage_root = os.path.realpath(sys.argv[3])
+    else:
+        # if using a disk driver in the gaia.conf file, then use it
+        if gaia_conf['driver'] == 'disk':
+            storage_root = gaia_conf['diskSettings']['storageRootDirectory']
+        else:
+            storage_root = os.getcwd()
 
     print 'Serve {} from {} on port {}'.format(read_url_prefix, storage_root, port)
 
