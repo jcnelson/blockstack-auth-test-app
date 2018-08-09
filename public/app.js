@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(event) { 
   document.getElementById('signin-button').addEventListener('click', function() {
     var authRequest = blockstack.makeAuthRequest()
-    blockstack.redirectToSignIn(window.location.origin, window.location.origin + '/manifest.json', ['store_write'])
+    blockstack.redirectToSignIn(window.location.origin, window.location.origin + '/manifest.json', ['store_write', 'publish_data'])
   })
   document.getElementById('signout-button').addEventListener('click', function() {
     blockstack.signUserOut(window.location.origin)
